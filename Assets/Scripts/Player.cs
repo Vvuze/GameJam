@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
     // КАМера
     public float mouseSensitivity = 2f;
     private float verticalRotation = 0f;
+    private float horizontalInput = 0f;
     private Transform cameraTransform;
 
     //хождение
@@ -26,13 +27,22 @@ public class Player : MonoBehaviour
     void Update()
     {
         moveHorizontal = Input.GetAxisRaw("Horizontal");
-        moveForward = Input.GetAxis("Vertical");
+        moveForward = Input.GetAxisRaw("Vertical");
 
+        horizontalInput += Input.GetAxis("Mouse X") * mouseSensitivity;
         RotateCamera();
     }
 
     private void FixedUpdate()
     {
+
+        if (horizontalInput != 0f)
+        {
+            Quaternion deltaRotation = Quaternion.Euler(0, horizontalInput, 0);
+            rb.MoveRotation(rb.rotation * deltaRotation);
+            horizontalInput = 0f; 
+        }
+
         Vector3 movement = (transform.right * moveHorizontal + transform.forward * moveForward).normalized;
         Vector3 targetVelocity = movement * MoveSpeed;
 
@@ -49,9 +59,6 @@ public class Player : MonoBehaviour
 
     void RotateCamera()
     {
-        float horizontalRotation = Input.GetAxis("Mouse X") * mouseSensitivity;
-        transform.Rotate(0, horizontalRotation, 0);
-
         verticalRotation -= Input.GetAxis("Mouse Y") * mouseSensitivity;
         verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f);
 

@@ -14,6 +14,7 @@ public class MusicLayer : MonoBehaviour, IInteractable
     [SerializeField] private Color inactiveColor = new Color(0.4f, 0.4f, 0.4f);
     [SerializeField] private float fadeSpeed = 4f;
 
+
     private AudioSource audioSource;
     private bool isActive;
     private float targetVolume;
@@ -28,8 +29,8 @@ public class MusicLayer : MonoBehaviour, IInteractable
     }
     void Start()
     {
-        MusicManager.Insstance.RegisterLayer(audioSource);
-        SetActive(startActive, instant: true);
+        MusicManager.Instance.RegisterLayer(audioSource, startActive);
+        SetActive(startActive, instant: true, notify: false);
     }
 
     void Update()
@@ -50,7 +51,7 @@ public class MusicLayer : MonoBehaviour, IInteractable
         return isActive ? "выключить" : "включить";
     }
 
-    private void SetActive(bool active, bool instant = false)
+    private void SetActive(bool active, bool instant = false, bool notify = true)
     {
         isActive = active;
         targetVolume = active ? 1f : 0f;
@@ -60,6 +61,11 @@ public class MusicLayer : MonoBehaviour, IInteractable
             audioSource.volume = targetVolume;
         }
         UpdateVisual();
+
+        if (notify)
+        {
+            MusicManager.Instance.NotifyLayerToggled(active);
+        }
     }
 
     private void UpdateVisual()
