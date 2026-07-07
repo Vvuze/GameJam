@@ -8,11 +8,16 @@ public class PlayerInteractor : MonoBehaviour
     [SerializeField] private LayerMask interactableLayer = -0;
     [SerializeField] private KeyCode interactKey = KeyCode.E;
 
+    [Header("UI (Не обязательно)")]
+    [SerializeField] private GameObject promptUI;
+    [SerializeField] private TMPro.TMP_Text promptText;
+
     private IInteractable currentTarget;
 
     void Update()
     {
         CheckForInteractable();
+        HandleUI();
         
         if (currentTarget != null && Input.GetKeyDown(interactKey))
         {
@@ -31,6 +36,18 @@ public class PlayerInteractor : MonoBehaviour
         else
         {
             currentTarget = null;
+        }
+    }
+
+    private void HandleUI()
+    {
+        if (promptUI == null) return;
+
+        bool hasTarget = currentTarget != null;
+        promptUI.SetActive(hasTarget);
+        if (hasTarget && promptText != null)
+        {
+            promptText.text = currentTarget.GetPrompt();
         }
     }
 

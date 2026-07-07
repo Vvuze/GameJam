@@ -19,6 +19,8 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         cameraTransform = Camera.main.transform;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void Update()
