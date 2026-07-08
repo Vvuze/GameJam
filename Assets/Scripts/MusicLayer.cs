@@ -14,6 +14,9 @@ public class MusicLayer : MonoBehaviour, IInteractable
     [SerializeField] private Color inactiveColor = new Color(0.4f, 0.4f, 0.4f);
     [SerializeField] private float fadeSpeed = 4f;
 
+    [Header("Световой пульс (необязательно)")]
+    [SerializeField] private ActivationPulseLight pulseLight;
+    [SerializeField] private Color pulseColor = new Color(1f, 0.9f, 0.7f); // тёплый белый
 
     private AudioSource audioSource;
     private bool isActive;
@@ -29,6 +32,8 @@ public class MusicLayer : MonoBehaviour, IInteractable
     }
     void Start()
     {
+        Debug.Log($"Зарегистрирован слой: {gameObject.name}", this);
+
         MusicManager.Instance.RegisterLayer(audioSource, startActive);
         SetActive(startActive, instant: true, notify: false);
     }
@@ -61,6 +66,11 @@ public class MusicLayer : MonoBehaviour, IInteractable
             audioSource.volume = targetVolume;
         }
         UpdateVisual();
+
+        if (pulseLight != null && !instant)
+        {
+            pulseLight.Play(pulseColor, active);
+        }
 
         if (notify)
         {
